@@ -56,10 +56,7 @@ def calculate_djf_mean(ds):
 
 outdir = "/sto4/data/Intermediate/VolMIP/"
 models = ['CanESM5', 'MIROC-ES2L', 'MPI-ESM1-2-LR', 'GISS-E2-1-G', 'UKESM1-0-LL']
-
-# according to member id in VOLMIP!!
-member_id = ['r1i1p2f1', 'r1i1p1f2', 'r1i1p1f1', 'r1i1p1f1', 'r1i1p1f2']
-
+member_id = ['r1i1p2f1', 'r1i1p1f2', 'r1i1p1f1', 'r1i1p1f2', 'r1i1p1f2']
 
 for model, id in zip(models, member_id):
     print(model)
