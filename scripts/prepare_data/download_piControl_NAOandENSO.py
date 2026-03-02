@@ -1,5 +1,5 @@
 from intake_esgf import ESGFCatalog
-import matplotlib.pyplot as plt
+import numpy as np
 import xarray as xr
 import xesmf as xe
 
@@ -16,6 +16,16 @@ def regrid(in_grid,out_grid, var):
 
 def clim(ds):
     return ds.groupby('time.month').mean('time')
+
+
+def global_mean(data, lat='lat', lon='lon'):
+    weights_lat_model = np.cos(np.deg2rad(data.lat))
+    try:
+        mean = data.weighted(weights_lat_model).mean([lat, lon])
+    except ValueError:
+        mean = data.weighted(weights_lat_model).mean([lat])
+    return mean
+
 
 def shift_lon(ds, lon_name = 'lon'):
     # Adjust lon values to make sure they are within (-180, 180)
@@ -38,14 +48,17 @@ def shift_lon(ds, lon_name = 'lon'):
 def calculate_nino34_index(ds):
     # ds needs to be tos-anomalies
     # 170° - 120°W -> 190 - 240°E
-    nino = ds.sel(lon=slice(190,240), lat=slice(-5,5)).mean(['lon', 'lat']).compute()
-    return nino
+    nino = ds.sel(lon=slice(190,240), lat=slice(-5,5))
+    nino_gm = global_mean(nino).compute()
+    return nino_gm
 
 def calculate_nao(ds):
-    ds_south = ds.sel(lat=slice(20,55), lon=slice(-90,60)).mean(['lon','lat'])
-    ds_north = ds.sel(lat=slice(55,90), lon=slice(-90,60)).mean(['lon','lat'])
+    ds_south = ds.sel(lat=slice(20,55), lon=slice(-90,60))
+    ds_south = global_mean(ds_south)
+    ds_north = ds.sel(lat=slice(55,90), lon=slice(-90,60))
+    ds_north = global_mean(ds_north)
     nao = (ds_south - ds_north).compute()
-    nao = nao.zg.to_dataset(name='zg')
+    nao = nao.to_dataset(name='zg')
     return nao
 
 
@@ -78,7 +91,7 @@ for model, id in zip(models, member_id):
     ds_prep = shift_lon(ds_zg.sel(plev=50000, lat=slice(0,100)))
 
     # calculate nao index
-    nao = calculate_nao(ds_prep)
+    nao = calculate_nao(ds_prep.zg)
     nao_djf = calculate_djf_mean(nao)
     # write output
     nao.to_netcdf(outdir + 'piControl/' + model + '/piControl_' + model + '_NAO_'+ start + '-' + end + '.nc')
@@ -101,7 +114,7 @@ for model, id in zip(models, member_id):
     nino_djf = calculate_djf_mean(nino)
 
     # build anomalies & calculate rsst nino index
-    tos_clim20 = tos_clim.sel(lat=slice(-20,20)).mean(['lat','lon'])
+    tos_clim20 = global_mean(tos_clim.sel(lat=slice(-20,20)))
     ds_ano = anomaly_calculation(ds_tos_reg, tos_clim20)
     rsstnino = calculate_nino34_index(ds_ano)
     rsstnino = rsstnino.to_dataset(name='tos')
