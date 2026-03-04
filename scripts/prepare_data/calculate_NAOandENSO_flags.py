@@ -43,16 +43,18 @@ nao_can = []
 nao_flag_can = []
 enso_can = []
 enso_flag_can = []
+year_can = []
 for file in glob.glob(path):
     realization_can.append(file.split('/')[-1].split('_')[4])
     data_can = xr.open_dataset(file)
     year_post_eruption = str(int(data_can.attrs['YMDH_branch_time_in_parent'].split(':')[0]) + 1)
+    year_can.append(str(year_post_eruption) + '-02-01')
 
     nao_can.append(nao.sel(time=year_post_eruption).zg.values[0])
     enso_can.append(enso.sel(time=year_post_eruption).tos.values[0])
     nao_flag_can.append(nao.sel(time=year_post_eruption).tercile.values[0])
     enso_flag_can.append(enso.sel(time=year_post_eruption).tercile.values[0])
-df = pd.DataFrame({'realization': realization_can, 'nao': nao_can, 'enso': enso_can, 'nao_flag': nao_flag_can, 'enso_flag': enso_flag_can})
+df = pd.DataFrame({'realization': realization_can, 'nao': nao_can, 'enso': enso_can, 'nao_flag': nao_flag_can, 'enso_flag': enso_flag_can, 'year': year_can})
 df['model'] = 'CanESM5'
 df_all.append(df)
 
@@ -71,17 +73,19 @@ nao_giss =[]
 enso_giss = []
 nao_flag_giss = []
 enso_flag_giss = []
+year_giss  = []
 for file in glob.glob(path):
     realization_giss.append(file.split('/')[-1].split('_')[4])
     data_giss = xr.open_dataset(file, decode_times=time_coder)
     year_post_eruption = str(int(str(data_giss.time[0].values).split('-')[0]) + 1)
+    year_giss.append(str(year_post_eruption) + '-02-01')
 
     nao_giss.append(nao.sel(time=year_post_eruption).zg.values[0])
     enso_giss.append(enso.sel(time=year_post_eruption).tos.values[0])
 
     nao_flag_giss.append(nao.sel(time=year_post_eruption).tercile.values[0])
     enso_flag_giss.append(enso.sel(time=year_post_eruption).tercile.values[0])
-df = pd.DataFrame({'realization': realization_giss, 'nao': nao_giss, 'enso': enso_giss, 'nao_flag': nao_flag_giss, 'enso_flag': enso_flag_giss})
+df = pd.DataFrame({'realization': realization_giss, 'nao': nao_giss, 'enso': enso_giss, 'nao_flag': nao_flag_giss, 'enso_flag': enso_flag_giss, 'year': year_giss})
 df['model'] = 'GISS-E2-1-G'
 df_all.append(df)
 
@@ -100,18 +104,20 @@ nao_miroc = []
 enso_miroc = []
 nao_flag_miroc = []
 enso_flag_miroc = []
+year_miroc = []
 for file in glob.glob(path):
     realization_miroc.append(file.split('/')[-1].split('_')[4])
     data_miroc = xr.open_dataset(file, decode_times=time_coder)
     start = datetime.strptime(data_miroc.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
     year_post_eruption = str((start + timedelta(days=data_miroc.attrs['branch_time_in_parent'])).year + 1)
+    year_miroc.append(str(year_post_eruption) + '-02-01')
 
     nao_miroc.append(nao.sel(time=year_post_eruption).zg.values[0])
     enso_miroc.append(enso.sel(time=year_post_eruption).tos.values[0])
 
     nao_flag_miroc.append(nao.sel(time=year_post_eruption).tercile.values[0])
     enso_flag_miroc.append(enso.sel(time=year_post_eruption).tercile.values[0])
-df = pd.DataFrame({'realization': realization_miroc, 'nao': nao_miroc, 'enso': enso_miroc, 'nao_flag': nao_flag_miroc, 'enso_flag': enso_flag_miroc})
+df = pd.DataFrame({'realization': realization_miroc, 'nao': nao_miroc, 'enso': enso_miroc, 'nao_flag': nao_flag_miroc, 'enso_flag': enso_flag_miroc, 'year': year_miroc})
 df['model'] = 'MIROC-ES2L'
 df_all.append(df)
 
@@ -130,18 +136,20 @@ nao_mpi = []
 enso_mpi = []
 nao_flag_mpi = []
 enso_flag_mpi = []
+year_mpi = []
 for file in glob.glob(path):
     realization_mpi.append(file.split('/')[-1].split('_')[4])
     data_mpi = xr.open_dataset(file, decode_times=time_coder)
     start = datetime.strptime(data_mpi.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
     year_post_eruption = str((start + timedelta(days=data_mpi.attrs['branch_time_in_parent'])).year + 1)
+    year_mpi.append(str(year_post_eruption) + '-02-01')
     
     nao_mpi.append(nao.sel(time=year_post_eruption).zg.values[0])
     enso_mpi.append(enso.sel(time=year_post_eruption).tos.values[0])
     
     nao_flag_mpi.append(nao.sel(time=year_post_eruption).tercile.values[0])
     enso_flag_mpi.append(enso.sel(time=year_post_eruption).tercile.values[0])
-df = pd.DataFrame({'realization': realization_mpi, 'nao': nao_mpi, 'enso': enso_mpi, 'nao_flag': nao_flag_mpi, 'enso_flag': enso_flag_mpi})
+df = pd.DataFrame({'realization': realization_mpi, 'nao': nao_mpi, 'enso': enso_mpi, 'nao_flag': nao_flag_mpi, 'enso_flag': enso_flag_mpi, 'year': year_mpi})
 df['model'] = 'MPI-ESM1-2-LR'
 df_all.append(df)
 
@@ -160,11 +168,13 @@ nao_ukesm = []
 enso_ukesm = []
 nao_flag_ukesm = []
 enso_flag_ukesm = []
+year_ukesm = []
 for file in glob.glob(path):
     realization_ukesm.append(file.split('/')[-1].split('_')[4])
     data_ukesm = xr.open_dataset(file, decode_times=time_coder)
     start = datetime.strptime(data_ukesm.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
     year_post_eruption = str((start + timedelta(days=data_ukesm.attrs['branch_time_in_parent'])).year + 1)
+    year_ukesm.append(str(year_post_eruption) + '-02-01')
     
     nao_ukesm.append(nao.sel(time=year_post_eruption).zg.values[0])
     enso_ukesm.append(enso.sel(time=year_post_eruption).tos.values[0])
@@ -172,7 +182,7 @@ for file in glob.glob(path):
     nao_flag_ukesm.append(nao.sel(time=year_post_eruption).tercile.values[0])
     enso_flag_ukesm.append(enso.sel(time=year_post_eruption).tercile.values[0])
 
-df = pd.DataFrame({'realization': realization_ukesm, 'nao': nao_ukesm, 'enso': enso_ukesm, 'nao_flag': nao_flag_ukesm, 'enso_flag': enso_flag_ukesm})
+df = pd.DataFrame({'realization': realization_ukesm, 'nao': nao_ukesm, 'enso': enso_ukesm, 'nao_flag': nao_flag_ukesm, 'enso_flag': enso_flag_ukesm, 'year': year_ukesm})
 df['model'] = 'UKESM1-0-LL'
 df_all.append(df)
 
