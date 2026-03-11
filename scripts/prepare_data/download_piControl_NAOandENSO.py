@@ -1,4 +1,5 @@
 from intake_esgf import ESGFCatalog
+import glob
 import numpy as np
 import xarray as xr
 import xesmf as xe
@@ -50,13 +51,16 @@ def calculate_nino34_index(ds):
     # 170° - 120°W -> 190 - 240°E
     nino = ds.sel(lon=slice(190,240), lat=slice(-5,5))
     nino_gm = global_mean(nino).compute()
+    # nino_gm = nino.mean(['lon', 'lat']).compute()
     return nino_gm
 
 def calculate_nao(ds):
     ds_south = ds.sel(lat=slice(20,55), lon=slice(-90,60))
     ds_south = global_mean(ds_south)
+    # ds_south = ds_south.mean(['lat', 'lon'])
     ds_north = ds.sel(lat=slice(55,90), lon=slice(-90,60))
     ds_north = global_mean(ds_north)
+    # ds_north = ds_north.mean(['lat', 'lon'])
     nao = (ds_south - ds_north).compute()
     nao = nao.to_dataset(name='zg')
     return nao
@@ -74,17 +78,17 @@ member_id = ['r1i1p2f1', 'r1i1p1f2', 'r1i1p1f1', 'r1i1p1f2', 'r1i1p1f2']
 for model, id in zip(models, member_id):
     print(model)
     # open ESGF catalog
-    cat=ESGFCatalog()
-    metagrid_search = cat.search(activity_id='CMIP', experiment_id='piControl', source_id=model,
-            variable_id=['tos', 'zg'], latest=True, table_id=['Omon','Amon'], member_id=id, grid_label='gn')
-    ds = metagrid_search.to_path_dict()
-    
+    # cat=ESGFCatalog()
+    # metagrid_search = cat.search(activity_id='CMIP', experiment_id='piControl', source_id=model,
+    #        variable_id=['tos', 'zg'], latest=True, table_id=['Omon','Amon'], member_id=id, grid_label='gn')
+    # ds = metagrid_search.to_path_dict()
+    path = outdir + 'piControl/' + model + '/full/'
     #####################################
     # NAO (Northern Atlanic Oscillation)#
     #####################################
 
     time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
-    ds_zg = xr.open_mfdataset(ds['Amon.zg'], decode_times=time_coder)
+    ds_zg = xr.open_mfdataset(glob.glob(path + 'zg*.nc'), decode_times=time_coder)
     start = str(ds_zg.time[0].values).split('-')[0]
     end = str(ds_zg.time[-1].values).split('-')[0]
     # shift lon to °W-°E so there is no problem at 0° 
@@ -100,7 +104,7 @@ for model, id in zip(models, member_id):
     ######################################
     # ENSO (El Nino Southern Oscillation)#
     ######################################
-    ds_tos = xr.open_mfdataset(ds['Omon.tos'], decode_times=time_coder)
+    ds_tos = xr.open_mfdataset(glob.glob(path + '*tos*'), decode_times=time_coder)
     # regrid to regular lat lon grid
     ds_tos_reg = regrid(ds_tos, ds_zg, 'tos')
 
