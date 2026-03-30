@@ -32,6 +32,9 @@ outfilename = "/home/kperny/VolMIP_stratosphere/tab/nao_enso_flags.csv"
 # CanESM5 #
 ###########
 path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/CanESM5/raw/ta*.nc"
+
+# path_nao = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/wrong_piControl_CanESM5_NAO_djf_5550-6600_wrong.nc"
+# path_enso = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/wrong_piControl_CanESM5_Nino34_djf_5550-6600_wrong.nc"
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/piControl_CanESM5_NAO_djf_5550-6600.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/piControl_CanESM5_Nino34_djf_5550-6600.nc"
 
@@ -62,6 +65,9 @@ df_all.append(df)
 # GISS-E2-1-G #
 ###############
 path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/GISS-E2-1-G/raw/ta*.nc"
+# path_nao = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/wrong_piControl_GISS-E2-1-G_NAO_djf_7550-8400_wrong.nc"
+# path_enso = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/wronf_piControl_GISS-E2-1-G_Nino34_djf_7550-8400_wrong.nc"
+
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/piControl_GISS-E2-1-G_NAO_djf_7550-8400.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/piControl_GISS-E2-1-G_Nino34_djf_7550-8400.nc"
 
@@ -93,6 +99,8 @@ df_all.append(df)
 # MIROC-ES2L #
 ##############
 path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MIROC-ES2L/raw/ta*.nc"
+# path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/wrong_piControl_MIROC-ES2L_NAO_djf_1850-2349_wrong.nc"
+# path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/wrong_piControl_MIROC-ES2L_Nino34_djf_1850-2349_wrong.nc"  
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/piControl_MIROC-ES2L_NAO_djf_1850-2349.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/piControl_MIROC-ES2L_Nino34_djf_1850-2349.nc"  
 
@@ -125,6 +133,8 @@ df_all.append(df)
 # MPI-ESM1-2-LR #
 #################
 path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MPI-ESM1-2-LR/raw/ta*.nc"
+# path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/wrong_piControl_MPI-ESM1-2-LR_NAO_djf_1850-2849_wrong.nc"
+# path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/wrong_piControl_MPI-ESM1-2-LR_Nino34_djf_1850-2849_wrong.nc"
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/piControl_MPI-ESM1-2-LR_NAO_djf_1850-2849.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/piControl_MPI-ESM1-2-LR_Nino34_djf_1850-2849.nc"
 
@@ -157,6 +167,8 @@ df_all.append(df)
 # UKESM1-0-LL #
 ###############
 path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/UKESM1-0-LL/raw/ta*.nc"
+# path_nao = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/wrong_piControl_UKESM1-0-LL_NAO_djf_1960-3839_wrong.nc"
+# path_enso = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/wrong_piControl_UKESM1-0-LL_Nino34_djf_1960-3839_wrong.nc"
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/piControl_UKESM1-0-LL_NAO_djf_1960-3839.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/piControl_UKESM1-0-LL_Nino34_djf_1960-3839.nc"
 
