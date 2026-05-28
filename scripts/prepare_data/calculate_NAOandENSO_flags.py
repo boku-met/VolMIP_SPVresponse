@@ -16,10 +16,12 @@ def calculate_tercile_flags(data, var):
     df['tercile'] = pd.cut(df[var], bins=tertiles, labels=[-1,0,1])
     return df['tercile']
 
-def calculate_index(path, var, time_coder=time_coder):
+def calculate_index(path, var, time_coder=time_coder, sel_time=None):
     # calculate index and tercile flags for a given variable and path (ENSO: var='tos', NAO: var='zg')
     data = xr.open_dataset(path, decode_times=time_coder)
-    index = (data - data.mean('time'))/ np.sqrt(data.var('time'))
+    if sel_time is not None:
+        data = data.isel(time=sel_time)
+    index = (data - data.mean('time'))/ np.sqrt(data.var('time'))   
     index['tercile'] = calculate_tercile_flags(index, var)
     return index
 
@@ -31,7 +33,7 @@ outfilename = "/home/kperny/VolMIP_stratosphere/tab/nao_enso_flags.csv"
 ###########
 # CanESM5 #
 ###########
-path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/CanESM5/raw/ta*.nc"
+path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/CanESM5/raw/ta*"
 
 # path_nao = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/wrong_piControl_CanESM5_NAO_djf_5550-6600_wrong.nc"
 # path_enso = "/sto4/data/Intermediate/VolMIP/piControl/CanESM5/wrong_piControl_CanESM5_Nino34_djf_5550-6600_wrong.nc"
@@ -47,7 +49,8 @@ nao_flag_can = []
 enso_can = []
 enso_flag_can = []
 year_can = []
-for file in glob.glob(path):
+for i in range(len(glob.glob(path))):
+    file = glob.glob(path + 'r' + str(i + 1) + 'i*.nc')[0]
     realization_can.append(file.split('/')[-1].split('_')[4])
     data_can = xr.open_dataset(file)
     year_post_eruption = str(int(data_can.attrs['YMDH_branch_time_in_parent'].split(':')[0]) + 1)
@@ -64,7 +67,7 @@ df_all.append(df)
 ###############
 # GISS-E2-1-G #
 ###############
-path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/GISS-E2-1-G/raw/ta*.nc"
+path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/GISS-E2-1-G/raw/ta*"
 # path_nao = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/wrong_piControl_GISS-E2-1-G_NAO_djf_7550-8400_wrong.nc"
 # path_enso = "/sto4/data/Intermediate/VolMIP/piControl/GISS-E2-1-G/wronf_piControl_GISS-E2-1-G_Nino34_djf_7550-8400_wrong.nc"
 
@@ -80,7 +83,8 @@ enso_giss = []
 nao_flag_giss = []
 enso_flag_giss = []
 year_giss  = []
-for file in glob.glob(path):
+for file in sorted(glob.glob(path)):
+    # file = glob.glob(path + 'r' + str(i + 1) + 'i*.nc')[0]
     realization_giss.append(file.split('/')[-1].split('_')[4])
     data_giss = xr.open_dataset(file, decode_times=time_coder)
     year_post_eruption = str(int(str(data_giss.time[0].values).split('-')[0]) + 1)
@@ -98,7 +102,7 @@ df_all.append(df)
 ##############
 # MIROC-ES2L #
 ##############
-path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MIROC-ES2L/raw/ta*.nc"
+path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MIROC-ES2L/raw/ta*"
 # path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/wrong_piControl_MIROC-ES2L_NAO_djf_1850-2349_wrong.nc"
 # path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/wrong_piControl_MIROC-ES2L_Nino34_djf_1850-2349_wrong.nc"  
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MIROC-ES2L/piControl_MIROC-ES2L_NAO_djf_1850-2349.nc"
@@ -113,7 +117,8 @@ enso_miroc = []
 nao_flag_miroc = []
 enso_flag_miroc = []
 year_miroc = []
-for file in glob.glob(path):
+for i in range(len(glob.glob(path))):
+    file = glob.glob(path + 'r' + str(i + 1) + 'i*.nc')[0]
     realization_miroc.append(file.split('/')[-1].split('_')[4])
     data_miroc = xr.open_dataset(file, decode_times=time_coder)
     start = datetime.strptime(data_miroc.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
@@ -132,7 +137,7 @@ df_all.append(df)
 #################
 # MPI-ESM1-2-LR #
 #################
-path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MPI-ESM1-2-LR/raw/ta*.nc"
+path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/MPI-ESM1-2-LR/raw/ta*"
 # path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/wrong_piControl_MPI-ESM1-2-LR_NAO_djf_1850-2849_wrong.nc"
 # path_enso = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/wrong_piControl_MPI-ESM1-2-LR_Nino34_djf_1850-2849_wrong.nc"
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/MPI-ESM1-2-LR/piControl_MPI-ESM1-2-LR_NAO_djf_1850-2849.nc"
@@ -147,7 +152,8 @@ enso_mpi = []
 nao_flag_mpi = []
 enso_flag_mpi = []
 year_mpi = []
-for file in glob.glob(path):
+for i in range(len(glob.glob(path))):
+    file = glob.glob(path + 'r' + str(i + 1) + 'i*.nc')[0]
     realization_mpi.append(file.split('/')[-1].split('_')[4])
     data_mpi = xr.open_dataset(file, decode_times=time_coder)
     start = datetime.strptime(data_mpi.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
@@ -166,14 +172,19 @@ df_all.append(df)
 ###############
 # UKESM1-0-LL #
 ###############
-path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/UKESM1-0-LL/raw/ta*.nc"
+path = "/sto4/data/Intermediate/VolMIP/pinatubo-full/UKESM1-0-LL/ta_A*"
 # path_nao = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/wrong_piControl_UKESM1-0-LL_NAO_djf_1960-3839_wrong.nc"
 # path_enso = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/wrong_piControl_UKESM1-0-LL_Nino34_djf_1960-3839_wrong.nc"
 path_nao = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/piControl_UKESM1-0-LL_NAO_djf_1960-3839.nc"
 path_enso = "/sto4/data/Intermediate/VolMIP/piControl/UKESM1-0-LL/piControl_UKESM1-0-LL_Nino34_djf_1960-3839.nc"
 
-nao = calculate_index(path_nao, 'zg')
-enso = calculate_index(path_enso, 'tos')
+# hard-coded years from Zanchettin et al 2022, Table S1, as the branch time in parent and child attributes are not correct for UKESM1-0-LL
+years = [3174, 3064, 3067, 3128, 3116, 3171, 3138, 3153, 3052, 3135, 3141, 3193, 3058, 3055, 3061, 3085, 3094, 3049, 3177, 3165, 3122, 3073, 3103, 3076, 3180]
+
+# nao = calculate_index(path_nao, 'zg')
+# enso = calculate_index(path_enso, 'tos')
+nao = calculate_index(path_nao, 'zg', sel_time=np.arange(2600-1960,3199-1960+1))
+enso = calculate_index(path_enso, 'tos', sel_time=np.arange(2600-1960,3199-1960+1))
 
 realization_ukesm = []
 nao_ukesm = []
@@ -181,11 +192,17 @@ enso_ukesm = []
 nao_flag_ukesm = []
 enso_flag_ukesm = []
 year_ukesm = []
-for file in glob.glob(path):
+
+#for file in sorted(glob.glob(path)):
+for i, year in enumerate(years):
+    file = glob.glob(path + 'r' + str(i + 1) + 'i1p1f2*')[0]
     realization_ukesm.append(file.split('/')[-1].split('_')[4])
     data_ukesm = xr.open_dataset(file, decode_times=time_coder)
-    start = datetime.strptime(data_ukesm.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
-    year_post_eruption = str((start + timedelta(days=data_ukesm.attrs['branch_time_in_parent'])).year + 1)
+    
+    # start = datetime.strptime(data_ukesm.attrs['parent_time_units'].split(' ')[2], '%Y-%m-%d') 
+    # year_post_eruption = str((start + timedelta(days=data_ukesm.attrs['branch_time_in_parent']) + timedelta(days=data_ukesm.attrs['branch_time_in_child'])).year + 1 )
+    # print(year_post_eruption)
+    year_post_eruption = str(year + 1)
     year_ukesm.append(str(year_post_eruption) + '-02-01')
     
     nao_ukesm.append(nao.sel(time=year_post_eruption).zg.values[0])
