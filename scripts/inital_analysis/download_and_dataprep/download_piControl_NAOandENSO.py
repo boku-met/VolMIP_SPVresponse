@@ -11,7 +11,7 @@ def anomaly_calculation(model, clim):
     return xr.concat(ano_list, dim='time').sortby('time')
 
 def regrid(in_grid,out_grid, var): 
-    reg_bil = xe.Regridder(in_grid,out_grid, "bilinear")
+    reg_bil = xe.Regridder(in_grid,out_grid, "bilinear", ignore_degenerate=True)
     var_bil = reg_bil(in_grid[var])
     return var_bil
 
@@ -72,9 +72,10 @@ def calculate_djf_mean(ds):
     return ds_djf
 
 outdir = "/sto4/data/Intermediate/VolMIP/"
-models = ['CanESM5', 'MIROC-ES2L', 'MPI-ESM1-2-LR', 'GISS-E2-1-G', 'UKESM1-0-LL']
-member_id = ['r1i1p2f1', 'r1i1p1f2', 'r1i1p1f1', 'r1i1p1f2', 'r1i1p1f2']
-
+# models = ['CanESM5', 'MIROC-ES2L', 'MPI-ESM1-2-LR', 'GISS-E2-1-G', 'UKESM1-0-LL', 'IPSL-CM6A-LR']
+models = [ 'IPSL-CM6A-LR']
+# member_id = ['r1i1p2f1', 'r1i1p1f2', 'r1i1p1f1', 'r1i1p1f2', 'r1i1p1f2', 'r1i1p1f1']
+member_id = ['r1i1p1f1']
 for model, id in zip(models, member_id):
     print(model)
     # open ESGF catalog
@@ -82,6 +83,7 @@ for model, id in zip(models, member_id):
     # metagrid_search = cat.search(activity_id='CMIP', experiment_id='piControl', source_id=model,
     #        variable_id=['tos', 'zg'], latest=True, table_id=['Omon','Amon'], member_id=id, grid_label='gn')
     # ds = metagrid_search.to_path_dict()
+
     path = outdir + 'piControl/' + model + '/full/'
     #####################################
     # NAO (Northern Atlanic Oscillation)#
